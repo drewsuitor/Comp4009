@@ -1,0 +1,34 @@
+#!/bin/sh
+echo "Compiling"
+
+./_compile
+
+echo "Processing ins/input1.txt into processed-outs/out1.txt"
+./main ins/input1.txt processed-outs/out1.txt
+
+echo "Processing ins/input2.txt into processed-outs/out2.txt"
+./main ins/input2.txt processed-outs/out2.txt
+
+echo "Processing ins/input3.txt into processed-outs/out3.txt"
+./main ins/input3.txt processed-outs/out3.txt
+
+echo "Processing ins/input4.txt into processed-outs/out4.txt"
+./main ins/input4.txt processed-outs/out4.txt
+
+echo "Processing ins/input5.txt into processed-outs/out5.txt"
+./main ins/input5.txt processed-outs/out5.txt
+
+echo "Comparing processed-outs/out1.txt to outs/output1.txt"
+diff processed-outs/out1.txt outs/output1.txt
+
+echo "Comparing processed-outs/out2.txt to outs/output2.txt"
+diff processed-outs/out2.txt outs/output2.txt
+
+echo "Comparing processed-outs/out3.txt to outs/output3.txt"
+diff processed-outs/out3.txt outs/output3.txt
+
+echo "Comparing processed-outs/out4.txt to outs/output4.txt"
+diff processed-outs/out4.txt outs/output4.txt
+
+echo "Comparing processed-outs/out5.txt to outs/output5.txt"
+diff processed-outs/out5.txt outs/output5.txt
