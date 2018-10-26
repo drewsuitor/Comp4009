@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "executing parallel process on arrays of size 128, 256, 512, 1024, and 2096"
+./main 128
+./main 256
+./main 512
+./main 1024
+./main 2048
+
+echo "executing linear process on arrays of size 128, 256, 512, 1024, and 2096"
+./nopar 128
+./nopar 256
+./nopar 512
+./nopar 1024
+./nopar 2048

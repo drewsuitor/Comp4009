@@ -1,0 +1,4 @@
+#!/bin/sh
+
+g++ main.cpp -O3 -fcilkplus -o main
+g++ nopar.cpp -O3 -fcilkplus -o nopar
