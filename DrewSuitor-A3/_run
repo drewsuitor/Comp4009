@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mpiexec -np 4 --hostfile _hostfile main 10 2 2 100 4 input1.txt
+
