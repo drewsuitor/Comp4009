@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
 	
 	int gridsize = N;
 	int procGridSize = p1;
-	int **global, **local, **localNext;
+	int **global, **local, **localNext, **procGrid;
 	int rank, p, i, j;
 	double wtime;
   
@@ -72,15 +72,19 @@ int main(int argc, char *argv[]){
 	
 	//cout << "  Process " << rank << " says 'Hello, world!'\n";
 
-	int masterH = (N/p2) + (N%p2);
-	int masterW = (N/p1) + (N%p1);
-	int slaveH = N/p2;
-	int slaveW = N/p1;
-	
-	int processorH = (rank==0)?masterH:slaveH;
-	int processorW = (rank==0)?masterW:slaveW;
+	malloc2D(&procGrid, procGridSize, procGridSize);
+
+	int a = 0;
+	for (int i = 0; i < procGridSize; i++){
+		for (int j = 0; j < procGridSize; j++){
+			procGrid[i][j] = a;
+			a++;
+		}
+	}
 	
 	if (rank == 0){
+		
+		wtime = MPI::Wtime();
 
 		malloc2D(&global, gridsize, gridsize);
 		
@@ -144,15 +148,138 @@ int main(int argc, char *argv[]){
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 	}
+	int localSize = gridsize/procGridSize;
+	int buffSize = localSize + localSize + 1;
+	int *buff = new int[buffSize];
+	int *recv = new int[buffSize];
+	int sendsize[p];
+	int disp[p];
+	int rdisp[p];
 	
-	
-	
-	
-//  Every process prints a hello.
 	if (rank == 0){
-		wtime = MPI::Wtime();
+		int sendsize[p] = {0, localSize, localSize, 1};
+		int disp[p] = {0, 0, localSize, buffSize-1};
+		
+		for (int i = 0; i < localSize; i++){
+			buff[i] = local[i][localSize-1];
+		}
+		
+		int j = localSize;
+		for (int i = 0; i < localSize; i++){
+			buff[j] = local[localSize-1][i];
+			j++;
+		}
+		
+		buff[buffSize] = local[localSize-1][localSize-1];
+		cout << rank << ": ";
+		for (int i = 0; i < (buffSize); i++){
+			cout << buff[i];
+		}
+		cout << endl;
+		
+		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
+		
+		cout << rank << " received: ";
+		for(int i = 0; i < buffSize; i++){
+			cout << recv[i];
+		}
+		cout << endl;
 	}
 	
+	if (rank == 1){
+		int sendsize[p] = {localSize, 0, 1, localSize};
+		int disp[p] = {0, localSize, buffSize-1, localSize};
+			
+		for (int i = 0; i < localSize; i++){
+			buff[i] = local[i][0];
+		}
+		
+		int j = localSize;
+		for (int i = 0; i < localSize; i++){
+			buff[j] = local[localSize-1][i];
+			j++;
+		}
+		
+		buff[buffSize-1] = local[localSize-1][0];
+		cout << rank << ": ";
+		for (int i = 0; i < (buffSize); i++){
+			cout << buff[i];
+		}
+		cout << endl;
+		
+		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
+		
+		cout << rank << " received: ";
+		for(int i = 0; i < buffSize; i++){
+			cout << recv[i];
+		}
+		cout << endl;
+	}
+	
+	if (rank == 2){
+		int sendsize[p] = {localSize, 1, 0, localSize};
+		int disp[p] = {localSize, buffSize-1, 0, 0};
+		
+		for (int i = 0; i < localSize; i++){
+			buff[i] = local[i][localSize-1];
+		}
+		
+		int j = localSize;
+		for (int i = 0; i < localSize; i++){
+			buff[j] = local[0][i];
+			j++;
+		}
+		
+		buff[buffSize-1] = local[0][localSize-1];
+		cout << rank << ": ";
+		for (int i = 0; i < (buffSize); i++){
+			cout << buff[i];
+		}
+		cout << endl;
+		
+		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
+		
+		cout << rank << " received: ";
+		for(int i = 0; i < buffSize; i++){
+			cout << recv[i];
+		}
+		cout << endl;
+	}
+	
+	if (rank == 3){
+		int sendsize[p] = {1, localSize, localSize, 0};
+		int disp[p] = {buffSize-1, localSize, 0, 0}; 
+		
+		for (int i = 0; i < localSize; i++){
+			buff[i] = local[i][0];
+		}
+		
+		int j = localSize;
+		for (int i = 0; i < localSize; i++){
+			buff[j] = local[0][i];
+			j++;
+		}
+		
+		buff[buffSize-1] = local[0][0];
+		cout << rank << ": ";
+		for (int i = 0; i < (buffSize); i++){
+			cout << buff[i];
+		}
+		cout << endl;
+		
+		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
+		
+		cout << rank << " received: ";
+		for(int i = 0; i < buffSize; i++){
+			cout << recv[i];
+		}
+		cout << endl;
+	}
+	
+	
+	
+	
+
 //  Process 0 says goodbye.
 	if (rank == 0){
 		wtime = MPI::Wtime() - wtime;
@@ -164,3 +291,16 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+//
