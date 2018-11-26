@@ -152,9 +152,10 @@ int main(int argc, char *argv[]){
 	int buffSize = localSize + localSize + 1;
 	int *buff = new int[buffSize];
 	int *recv = new int[buffSize];
-	int sendsize[p];
-	int disp[p];
-	int rdisp[p];
+	int *left = new int[localSize];
+	int *right = new int[localSize];
+	int *top = new int[localSize];
+	int *bot = new int[localSize];
 	
 	if (rank == 0){
 		int sendsize[p] = {0, localSize, localSize, 1};
@@ -171,17 +172,20 @@ int main(int argc, char *argv[]){
 		}
 		
 		buff[buffSize] = local[localSize-1][localSize-1];
-		cout << rank << ": ";
-		for (int i = 0; i < (buffSize); i++){
-			cout << buff[i];
-		}
-		cout << endl;
 		
 		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
 		
-		cout << rank << " received: ";
-		for(int i = 0; i < buffSize; i++){
-			cout << recv[i];
+		cout << rank << " right: ";
+
+		right = recv;
+		for(int i = 0; i < localSize; i++){
+			cout << right[i];
+		}
+		cout << ", bottom: ";
+		
+		bot = recv + localSize;
+		for(int i = 0; i < localSize; i++){
+			cout << bot[i];
 		}
 		cout << endl;
 	}
@@ -201,17 +205,20 @@ int main(int argc, char *argv[]){
 		}
 		
 		buff[buffSize-1] = local[localSize-1][0];
-		cout << rank << ": ";
-		for (int i = 0; i < (buffSize); i++){
-			cout << buff[i];
-		}
-		cout << endl;
 		
 		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
 		
-		cout << rank << " received: ";
-		for(int i = 0; i < buffSize; i++){
-			cout << recv[i];
+		cout << rank << " left:  ";
+
+		left = recv;
+		for(int i = 0; i < localSize; i++){
+			cout << left[i];
+		}
+		cout << ", bottom: ";
+		
+		bot = recv + localSize;
+		for(int i = 0; i < localSize; i++){
+			cout << bot[i];
 		}
 		cout << endl;
 	}
@@ -231,19 +238,23 @@ int main(int argc, char *argv[]){
 		}
 		
 		buff[buffSize-1] = local[0][localSize-1];
-		cout << rank << ": ";
-		for (int i = 0; i < (buffSize); i++){
-			cout << buff[i];
-		}
-		cout << endl;
 		
 		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
 		
-		cout << rank << " received: ";
-		for(int i = 0; i < buffSize; i++){
-			cout << recv[i];
+		cout << rank << " right: ";
+
+		right = recv;
+		for(int i = 0; i < localSize; i++){
+			cout << right[i];
+		}
+		cout << ", top:    ";
+		
+		top = recv + localSize;
+		for(int i = 0; i < localSize; i++){
+			cout << top[i];
 		}
 		cout << endl;
+		
 	}
 	
 	if (rank == 3){
@@ -260,23 +271,23 @@ int main(int argc, char *argv[]){
 			j++;
 		}
 		
-		buff[buffSize-1] = local[0][0];
-		cout << rank << ": ";
-		for (int i = 0; i < (buffSize); i++){
-			cout << buff[i];
-		}
-		cout << endl;
-		
 		MPI_Alltoallv(buff, sendsize, disp, MPI_INT, recv, sendsize, disp, MPI_INT, MPI_COMM_WORLD);
 		
-		cout << rank << " received: ";
-		for(int i = 0; i < buffSize; i++){
-			cout << recv[i];
+		cout << rank << " left:  ";
+
+		left = recv;
+		for(int i = 0; i < localSize; i++){
+			cout << left[i];
+		}
+		cout << ", top:    ";
+		
+		top = recv + localSize;
+		for(int i = 0; i < localSize; i++){
+			cout << top[i];
 		}
 		cout << endl;
+		
 	}
-	
-	
 	
 	
 
