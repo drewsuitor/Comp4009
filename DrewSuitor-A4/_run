@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mpiexec -np 4 main
+
