@@ -6,6 +6,6 @@ Assignment 1 - Parallel Image Filtering
 
 Assignment 2 - Parallel Matrix Multiplication
 
-Assignment 3 - 
+Assignment 3 - MPI Game of Life
 
-Assignment 4 - 
+Assignment 4 - MPI Deterministic Sample Sorting
